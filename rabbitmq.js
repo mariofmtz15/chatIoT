@@ -27,6 +27,7 @@ async function consume(channel) {
 
                 // Send the message to all connected clients via WebSockets
                 // io.emit('message', messageContent);
+                sendMessageToQueue(message)
 
                 // Acknowledge receipt of the message
                 channel.ack(message);
@@ -57,5 +58,14 @@ async function main() {
         await connection.close();
     }
 }
+
+const sendMessageToQueue = async (message) => {
+    const{connection,channel} = await connect()
+    channel.sendToQueue(queueName,message)
+    await channel.close()
+    await connection.close()
+}
+
+module.exports = { sendMessageToQueue };
 
 main();
